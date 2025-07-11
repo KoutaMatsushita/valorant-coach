@@ -1,12 +1,12 @@
 import { google } from "@ai-sdk/google";
 import { Agent } from "@mastra/core/agent";
-import { Memory } from "@mastra/memory";
 import { LibSQLStore } from "@mastra/libsql";
-import * as valorantTool from "../tools/valorant-api-fetch-tools";
-import * as aimlabTool from "../tools/aimlab-fetch-tools";
-import { valorantSaveKnowledgeWorkflow } from "../workflows/valorant-save-knowledge-workflow";
+import { Memory } from "@mastra/memory";
 import { createVectorQueryTool } from "@mastra/rag";
 import { VALORANT_KNOWLEDGE_INDEX } from "../stores/valorantKnowledgeStore";
+import * as aimlabTool from "../tools/aimlab-fetch-tools";
+import * as valorantTool from "../tools/valorant-api-fetch-tools";
+import { valorantSaveKnowledgeWorkflow } from "../workflows/valorant-save-knowledge-workflow";
 
 const vectorQueryTool = createVectorQueryTool({
 	description: "コーチによる valorant の試合評価結果が格納されている",

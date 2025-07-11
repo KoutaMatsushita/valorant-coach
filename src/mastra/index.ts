@@ -1,9 +1,9 @@
 import { Mastra } from "@mastra/core/mastra";
-import { PinoLogger } from "@mastra/loggers";
 import { LibSQLStore } from "@mastra/libsql";
+import { PinoLogger } from "@mastra/loggers";
 import { valorantCoachiAgent } from "./agents/valorant-coachi-agent";
-import { valorantSaveKnowledgeWorkflow } from "./workflows/valorant-save-knowledge-workflow";
 import { valorantKnowledgeStore } from "./stores/valorantKnowledgeStore";
+import { valorantSaveKnowledgeWorkflow } from "./workflows/valorant-save-knowledge-workflow";
 
 export const mastra = new Mastra({
 	workflows: { valorantKnowledgeWorkflow: valorantSaveKnowledgeWorkflow },

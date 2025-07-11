@@ -1,8 +1,8 @@
 import { createTool } from "@mastra/core/tools";
 import { z } from "zod";
 import {
-	getUserInfo,
 	getPlaysAgg,
+	getUserInfo,
 	UserInfoSchema,
 	UserPlaysAggSchema,
 } from "../lib/aimlab-api";

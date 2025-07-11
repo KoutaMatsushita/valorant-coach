@@ -1,5 +1,5 @@
-import { MatchV4Schema } from "./valorant-api";
 import { z } from "zod";
+import type { MatchV4Schema } from "./valorant-api";
 
 const LocationSchema = z
 	.object({
@@ -26,18 +26,6 @@ const OverallPlayerStatsSchema = z
 	})
 	.nullish();
 
-const RoundPlayerStatsSchema = z
-	.object({
-		bodyshots: z.number().optional(),
-		headshots: z.number().optional(),
-		legshots: z.number().optional(),
-		damage: z.number().optional(),
-		kills: z.number().optional(),
-		assists: z.number().optional(),
-		score: z.number().optional(),
-	})
-	.optional();
-
 // Corrected: Two different schemas for economy.
 const OverallEconomySchema = z
 	.object({
@@ -55,26 +43,6 @@ const OverallEconomySchema = z
 			.optional(),
 	})
 	.nullish();
-
-const RoundEconomySchema = z
-	.object({
-		loadout_value: z.number().optional(),
-		remaining: z.number().optional(),
-		weapon: z
-			.object({
-				id: z.string().nullish(),
-				name: z.string().nullish(),
-				type: z.string().nullish(),
-			})
-			.optional(),
-		armor: z
-			.object({
-				id: z.string().uuid().optional(),
-				name: z.string().optional(),
-			})
-			.nullish(),
-	})
-	.optional();
 
 // Corrected: One unified schema for ability casts, as the structure is identical in the V4 API.
 const AbilityCastsSchema = z
@@ -199,7 +167,7 @@ export const extractPlayerDataForAI_V4 = (
 	targetPuuid: string,
 ): ExtractedPlayerData => {
 	// プレイヤー全体の情報を取得
-	const player = match?.players?.find((p: any) => p.puuid === targetPuuid);
+	const player = match?.players?.find((p) => p.puuid === targetPuuid);
 	if (!player) return null;
 
 	// 各ラウンドにおける対象プレイヤーの統計を抽出
@@ -256,7 +224,7 @@ export const extractPlayerDataForAI_V4 = (
 			startedAt: match?.metadata?.started_at,
 			gameLengthMs: match?.metadata?.game_length_in_ms,
 			isCompleted: match?.metadata?.is_completed,
-			winningTeam: match?.teams?.find((t: any) => t.won)?.team_id, // 勝利チームID
+			winningTeam: match?.teams?.find((t) => t.won)?.team_id, // 勝利チームID
 			roundsPlayed: match.rounds?.length,
 		},
 		playerSummary: {

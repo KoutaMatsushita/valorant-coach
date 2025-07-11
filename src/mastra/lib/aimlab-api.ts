@@ -104,7 +104,7 @@ export const UserPlaysAggSchema = z.object({
 
 export type UserPlaysAggSchemaType = z.infer<typeof UserPlaysAggSchema>;
 
-export async function APIFetch<T>(query: any, variables: any) {
+export async function APIFetch<T>(query: string, variables: object) {
 	const response = await fetch(API_ENDPOINT, {
 		method: "POST",
 		headers: {

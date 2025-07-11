@@ -1,15 +1,9 @@
-import { createStep, createWorkflow } from "@mastra/core";
-
-import { z } from "zod";
-import { MDocument } from "@mastra/rag";
 import { google } from "@ai-sdk/google";
-import { Embedding, embedMany } from "ai";
-import {
-	createValorantKnowledgeIndex,
-	VALORANT_KNOWLEDGE_INDEX,
-	valorantKnowledgeStore,
-} from "../stores/valorantKnowledgeStore";
+import { createStep, createWorkflow } from "@mastra/core";
 import { Agent } from "@mastra/core/agent";
+import { MDocument } from "@mastra/rag";
+import { type Embedding, embedMany } from "ai";
+import { z } from "zod";
 import { extractPlayerDataForAI_V4 } from "../lib/extractPlayerDataForAI_V4";
 import {
 	AccountSchema,
@@ -20,6 +14,11 @@ import {
 	PlatformSchema,
 	RegionSchema,
 } from "../lib/valorant-api";
+import {
+	createValorantKnowledgeIndex,
+	VALORANT_KNOWLEDGE_INDEX,
+	valorantKnowledgeStore,
+} from "../stores/valorantKnowledgeStore";
 
 const fetchAccount = createStep({
 	id: "fetch-valorant-account",
@@ -162,7 +161,7 @@ const valorantSaveKnowledgeWorkflow = createWorkflow({
 		mode: ModeSchema,
 		region: RegionSchema,
 	}),
-	outputSchema: z.array(z.string()),
+	outputSchema: z.array(z.object({ success: z.boolean() })),
 	steps: [fetchAccount, fetchMatches, saveKnowledge],
 })
 	.then(fetchAccount)
