@@ -29,6 +29,7 @@ const fetchAccount = createStep({
 		platform: PlatformSchema,
 		mode: ModeSchema,
 		region: RegionSchema,
+		size: z.number().min(1).max(10).default(5).describe("取得する試合件数"),
 	}),
 	outputSchema: AccountSchema,
 	execute: async ({ inputData: { name, tag } }) => {
@@ -42,8 +43,8 @@ const fetchMatches = createStep({
 	inputSchema: AccountSchema,
 	outputSchema: z.array(MatchV4Schema),
 	execute: async ({ inputData: { puuid }, getInitData }) => {
-		const { platform, region, mode } = getInitData();
-		return await getMatchesByPuuid(puuid, region, platform, mode);
+		const { platform, region, mode, size } = getInitData();
+		return await getMatchesByPuuid(puuid, region, platform, mode, size);
 	},
 });
 
@@ -70,7 +71,7 @@ const saveKnowledge = createStep({
 	id: "save-knowledge",
 	description: "save valorant match",
 	inputSchema: MatchV4Schema,
-	outputSchema: z.string(),
+	outputSchema: z.object({ success: z.boolean() }),
 	execute: async ({ inputData, getStepResult }) => {
 		const { puuid } = getStepResult(fetchAccount);
 		const extractedData = extractPlayerDataForAI_V4(inputData, puuid);
@@ -147,19 +148,21 @@ const saveKnowledge = createStep({
 			metadata: chunks.flat().map((c) => ({ ...c.metadata, text: c.text })),
 		});
 
-		return text;
+		return { success: true };
 	},
 });
 
 const valorantSaveKnowledgeWorkflow = createWorkflow({
 	id: "valorant-save-knowledge-workflow",
-	description: "valorant の直近の試合をベクトル DB に格納する",
+	description:
+		"valorant の直近の試合をベクトル DB に格納する。格納した情報は vectorQueryTool などから別途取得する。 ",
 	inputSchema: z.object({
 		name: z.string(),
 		tag: z.string(),
 		platform: PlatformSchema,
 		mode: ModeSchema,
 		region: RegionSchema,
+		size: z.number().min(1).max(10).default(5).describe("取得する試合件数"),
 	}),
 	outputSchema: z.array(z.object({ success: z.boolean() })),
 	steps: [fetchAccount, fetchMatches, saveKnowledge],
