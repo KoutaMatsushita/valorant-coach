@@ -23,10 +23,10 @@ export const getAimlabPlaysAggTool = createTool({
 	id: "aimlab-get-plays-agg",
 	description: "Get aimalb play histories for user.",
 	inputSchema: z.object({
-		id: z.string().describe("aimlab id"),
+		userId: z.string().describe("aimlab id"),
 	}),
 	outputSchema: UserPlaysAggSchema,
-	execute: async ({ context: { id } }) => {
-		return await getPlaysAgg(id);
+	execute: async ({ context: { userId } }) => {
+		return await getPlaysAgg(userId);
 	},
 });

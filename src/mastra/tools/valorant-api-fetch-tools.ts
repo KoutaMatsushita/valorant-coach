@@ -6,16 +6,21 @@ import {
 } from "../lib/extractPlayerDataForAI_V4";
 import {
 	AccountSchema,
+	ContentSchema,
 	EsportsScheduleSchema,
 	generateCrosshairImage,
 	getAccount,
 	getAccountByPuuid,
+	getContent,
 	getEsportsSchedule,
 	getLeaderboardV3,
 	getMatch,
+	getMatches,
 	getMatchesByPuuid,
 	getMmrByPuuidV3,
 	getMmrHistoryByPuuidV2,
+	getMmrHistoryV2,
+	getMmrV3,
 	getPremierLeaderboard,
 	getPremierSeasons,
 	getPremierTeam,
@@ -24,6 +29,7 @@ import {
 	getStoreFeaturedV2,
 	getStoreOffersV2,
 	LeaderboardV3Schema,
+	MatchV4Schema,
 	MmrHistoryV2Schema,
 	MmrV3Schema,
 	ModeSchema,
@@ -68,6 +74,45 @@ export const getValorantAccountByPuuidTool = createTool({
 	},
 });
 
+export const getValorantMatchesTool = createTool({
+	id: "valorant-get-matches-tool",
+	description: "Get Valorant matches",
+	inputSchema: z.object({
+		name: z.string(),
+		tag: z.string(),
+		region: RegionSchema,
+		platform: PlatformSchema,
+		mode: ModeSchema.optional(),
+		size: z.number().min(1).max(10).default(1).optional(),
+		start: z.number().min(0).default(0).optional(),
+	}),
+	outputSchema: z.array(MatchV4Schema),
+	execute: async ({
+		context: { name, tag, region, platform, mode, size, start },
+	}) => {
+		return getMatches(name, tag, region, platform, mode, size, start);
+	},
+});
+
+export const getValorantMatchesByPuuidTool = createTool({
+	id: "valorant-get-matches-by-puuid-tool",
+	description: "Get Valorant matches by PUUID.",
+	inputSchema: z.object({
+		puuid: z.string().describe("valorant puuid"),
+		region: RegionSchema,
+		platform: PlatformSchema,
+		mode: ModeSchema.optional(),
+		size: z.number().min(1).max(10).optional(),
+		start: z.number().min(1).optional(),
+	}),
+	outputSchema: z.array(MatchV4Schema),
+	execute: async ({
+		context: { puuid, region, platform, mode, size, start },
+	}) => {
+		return getMatchesByPuuid(puuid, region, platform, mode, size, start);
+	},
+});
+
 export const getValorantMatchIdsByPuuidTool = createTool({
 	id: "valorant-get-match-ids-by-puuid",
 	description: "Get Valorant match ids by PUUID.",
@@ -103,7 +148,35 @@ export const getValorantMatchSummaryTool = createTool({
 	},
 });
 
-export const getMmrByPuuidV3Tool = createTool({
+export const getValorantMatchTool = createTool({
+	id: "valorant-get-match-by-id",
+	description: "Get Valorant match summary by id.",
+	inputSchema: z.object({
+		matchId: z.string(),
+		region: RegionSchema,
+	}),
+	outputSchema: MatchV4Schema,
+	execute: async ({ context: { matchId, region } }) => {
+		return getMatch(matchId, region);
+	},
+});
+
+export const getValorantMmrV3Tool = createTool({
+	id: "valorant-get-mmr-v3",
+	description: "Get MMR details for a player (v3)",
+	inputSchema: z.object({
+		name: z.string(),
+		tag: z.string(),
+		region: RegionSchema,
+		platform: PlatformSchema,
+	}),
+	outputSchema: MmrV3Schema,
+	execute: async ({ context: { name, tag, region, platform } }) => {
+		return getMmrV3(name, tag, region, platform);
+	},
+});
+
+export const getValorantMmrByPuuidV3Tool = createTool({
 	id: "valorant-get-mmr-by-puuid-v3",
 	description: "Get MMR details for a player by PUUID (v3).",
 	inputSchema: z.object({
@@ -117,7 +190,22 @@ export const getMmrByPuuidV3Tool = createTool({
 	},
 });
 
-export const getMmrHistoryByPuuidV2Tool = createTool({
+export const getValorantMmrHistoryV2Tool = createTool({
+	id: "valorant-get-mmr-history-v2",
+	description: "Get MMR history for a player (v2).",
+	inputSchema: z.object({
+		name: z.string(),
+		tag: z.string(),
+		region: RegionSchema,
+		platform: PlatformSchema,
+	}),
+	outputSchema: MmrHistoryV2Schema,
+	execute: async ({ context: { name, tag, region, platform } }) => {
+		return getMmrHistoryV2(name, tag, region, platform);
+	},
+});
+
+export const getValorantMmrHistoryByPuuidV2Tool = createTool({
 	id: "valorant-get-mmr-history-by-puuid-v2",
 	description: "Get MMR history for a player by PUUID (v2).",
 	inputSchema: z.object({
@@ -131,7 +219,7 @@ export const getMmrHistoryByPuuidV2Tool = createTool({
 	},
 });
 
-export const getLeaderboardV3Tool = createTool({
+export const getValorantLeaderboardV3Tool = createTool({
 	id: "valorant-get-leaderboard-v3",
 	description:
 		"Get the ranked leaderboard for a specific region and season (v3).",
@@ -174,7 +262,7 @@ export const getLeaderboardV3Tool = createTool({
 	},
 });
 
-export const getPremierTeamTool = createTool({
+export const getValorantPremierTeamTool = createTool({
 	id: "valorant-get-premier-team",
 	description: "Get details about a premier team.",
 	inputSchema: z.object({
@@ -186,7 +274,7 @@ export const getPremierTeamTool = createTool({
 	},
 });
 
-export const getPremierTeamHistoryTool = createTool({
+export const getValorantPremierTeamHistoryTool = createTool({
 	id: "valorant-get-premier-team-history",
 	description: "Get match history of a premier team.",
 	inputSchema: z.object({
@@ -198,7 +286,7 @@ export const getPremierTeamHistoryTool = createTool({
 	},
 });
 
-export const searchPremierTeamsTool = createTool({
+export const searchValorantPremierTeamsTool = createTool({
 	id: "valorant-search-premier-teams",
 	description: "Search for current active premier teams.",
 	inputSchema: z.object({
@@ -213,7 +301,7 @@ export const searchPremierTeamsTool = createTool({
 	},
 });
 
-export const getPremierLeaderboardTool = createTool({
+export const getValorantPremierLeaderboardTool = createTool({
 	id: "valorant-get-premier-leaderboard",
 	description:
 		"Get a combined leaderboard in the affinity, sorted by div and ranking.",
@@ -228,7 +316,7 @@ export const getPremierLeaderboardTool = createTool({
 	},
 });
 
-export const getPremierSeasonsTool = createTool({
+export const getValorantPremierSeasonsTool = createTool({
 	id: "valorant-get-premier-seasons",
 	description: "Get a list of all premier seasons.",
 	inputSchema: z.object({
@@ -240,7 +328,7 @@ export const getPremierSeasonsTool = createTool({
 	},
 });
 
-export const getStoreFeaturedV2Tool = createTool({
+export const getValorantStoreFeaturedV2Tool = createTool({
 	id: "valorant-get-store-featured-v2",
 	description: "Get current featured store bundles (v2).",
 	inputSchema: z.object({}),
@@ -250,7 +338,7 @@ export const getStoreFeaturedV2Tool = createTool({
 	},
 });
 
-export const getStoreOffersV2Tool = createTool({
+export const getValorantStoreOffersV2Tool = createTool({
 	id: "valorant-get-store-offers-v2",
 	description: "Get current store offers (v2).",
 	inputSchema: z.object({}),
@@ -260,7 +348,7 @@ export const getStoreOffersV2Tool = createTool({
 	},
 });
 
-export const getEsportsScheduleTool = createTool({
+export const getValorantEsportsScheduleTool = createTool({
 	id: "valorant-get-esports-schedule",
 	description: "Returns esports schedule data.",
 	inputSchema: z.object({
@@ -273,7 +361,7 @@ export const getEsportsScheduleTool = createTool({
 	},
 });
 
-export const getQueueStatusTool = createTool({
+export const getValorantQueueStatusTool = createTool({
 	id: "valorant-get-queue-status",
 	description: "Get a list of all available queues and their metadata.",
 	inputSchema: z.object({
@@ -285,7 +373,7 @@ export const getQueueStatusTool = createTool({
 	},
 });
 
-export const generateCrosshairImageTool = createTool({
+export const generateValorantCrosshairImageTool = createTool({
 	id: "valorant-generate-crosshair-image",
 	description: "Outputs a 1024x1024 pixel image of the requested crosshair.",
 	inputSchema: z.object({
@@ -294,5 +382,18 @@ export const generateCrosshairImageTool = createTool({
 	outputSchema: z.string(), // This will return a URL to the image
 	execute: async ({ context: { id } }) => {
 		return generateCrosshairImage(id);
+	},
+});
+
+export const getValorantContentTool = createTool({
+	id: "valorant-content",
+	description: "Get Valorant basic content data like season id's or skins.",
+	inputSchema: z.object({
+		locale: z.string().default("ja-JP").describe("user locale"),
+	}),
+	outputSchema: ContentSchema,
+	execute: async ({ context: { locale } }) => {
+		console.log(await getContent(locale));
+		return getContent(locale);
 	},
 });

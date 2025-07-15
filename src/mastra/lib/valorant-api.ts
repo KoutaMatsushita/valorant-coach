@@ -26,7 +26,7 @@ export async function fetchValorantApi(endpoint: string) {
 		throw new Error(`API returned an error: ${JSON.stringify(data.errors)}`);
 	}
 
-	return data.data;
+	return data.data ?? data;
 }
 
 export const PlatformSchema = z.enum(["pc", "console"]).default("pc");
@@ -1637,11 +1637,15 @@ export async function getAccountByPuuid(
 	return fetchValorantApi(`/valorant/v2/by-puuid/account/${puuid}`);
 }
 
-export async function getMmrByPuuid(
-	puuid: string,
+export async function getMmrV3(
+	name: string,
+	tag: string,
 	region: RegionType,
-): Promise<z.infer<typeof MmrSchema>> {
-	return fetchValorantApi(`/valorant/v2/by-puuid/mmr/${region}/${puuid}`);
+	platform: PlatformType,
+): Promise<z.infer<typeof MmrV3Schema>> {
+	return fetchValorantApi(
+		`/valorant/v3/by-puuid/mmr/${region}/${platform}/${name}/${tag}`,
+	);
 }
 
 export async function getMmrByPuuidV3(
@@ -1651,6 +1655,17 @@ export async function getMmrByPuuidV3(
 ): Promise<z.infer<typeof MmrV3Schema>> {
 	return fetchValorantApi(
 		`/valorant/v3/by-puuid/mmr/${region}/${platform}/${puuid}`,
+	);
+}
+
+export async function getMmrHistoryV2(
+	name: string,
+	tag: string,
+	region: RegionType,
+	platform: PlatformType,
+): Promise<z.infer<typeof MmrHistoryV2Schema>> {
+	return fetchValorantApi(
+		`/valorant/v2/by-puuid/mmr-history/${region}/${platform}/${name}/${tag}`,
 	);
 }
 
@@ -1697,16 +1712,36 @@ export async function getMmrHistoryByPuuid(
 	);
 }
 
+export async function getMatches(
+	name: string,
+	tag: string,
+	region: RegionType,
+	platform: PlatformType,
+	mode?: ModeType,
+	size?: number,
+	start?: number,
+): Promise<z.infer<typeof MatchV4Schema>[]> {
+	const params = new URLSearchParams();
+	if (mode) params.append("mode", mode.toString());
+	if (size) params.append("size", size.toString());
+	if (start) params.append("start", start.toString());
+	return fetchValorantApi(
+		`/valorant/v4/matches/${region}/${platform}/${name}/${tag}?${params.toString()}`,
+	);
+}
+
 export async function getMatchesByPuuid(
 	puuid: string,
 	region: RegionType,
 	platform: PlatformType,
 	mode?: ModeType,
 	size?: number,
+	start?: number,
 ): Promise<z.infer<typeof MatchV4Schema>[]> {
 	const params = new URLSearchParams();
 	if (mode) params.append("mode", mode.toString());
 	if (size) params.append("size", size.toString());
+	if (start) params.append("start", start.toString());
 	return fetchValorantApi(
 		`/valorant/v4/by-puuid/matches/${region}/${platform}/${puuid}?${params.toString()}`,
 	);

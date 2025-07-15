@@ -1,18 +1,17 @@
 import { Mastra } from "@mastra/core/mastra";
-import { LibSQLStore } from "@mastra/libsql";
 import { PinoLogger } from "@mastra/loggers";
-import { valorantCoachiAgent } from "./agents/valorant-coachi-agent";
-import { valorantKnowledgeStore } from "./stores/valorantKnowledgeStore";
+import { valorantCoachAgent } from "./agents/valorant-coach-agent";
+import { valorantResearchAgent } from "./agents/valorant-research-agent";
+import { valorantKnowledgeVectorStore } from "./stores/valorantKnowledgeVectorStore";
+import { valorantStore } from "./stores/valorantStore";
 import { valorantSaveKnowledgeWorkflow } from "./workflows/valorant-save-knowledge-workflow";
+import { valorantSaveMatchWorkflow } from "./workflows/valorant-save-match-workflow";
 
 export const mastra = new Mastra({
-	workflows: { valorantKnowledgeWorkflow: valorantSaveKnowledgeWorkflow },
-	agents: { valorantCoachiAgent },
-	storage: new LibSQLStore({
-		// stores telemetry, evals, ... into memory storage, if it needs to persist, change to file:../mastra.db
-		url: "file:../mastra.db",
-	}),
-	vectors: { LibSQLVector: valorantKnowledgeStore },
+	workflows: { valorantSaveKnowledgeWorkflow, valorantSaveMatchWorkflow },
+	agents: { valorantCoachAgent, valorantResearchAgent },
+	storage: valorantStore,
+	vectors: { valorantKnowledgeVectorStore },
 	logger: new PinoLogger({
 		name: "Mastra",
 		level: "info",

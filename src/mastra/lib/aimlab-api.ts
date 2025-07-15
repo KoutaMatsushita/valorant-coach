@@ -127,7 +127,9 @@ export async function getUserInfo(
 	});
 }
 
-export async function getPlaysAgg(id: string): Promise<UserPlaysAggSchemaType> {
+export async function getPlaysAgg(
+	userId: string,
+): Promise<UserPlaysAggSchemaType> {
 	return await APIFetch<UserPlaysAggSchemaType>(GET_USER_PLAYS_AGG, {
 		where: {
 			is_practice: {
@@ -137,7 +139,7 @@ export async function getPlaysAgg(id: string): Promise<UserPlaysAggSchemaType> {
 				_gt: 0,
 			},
 			user_id: {
-				_eq: id,
+				_eq: userId,
 			},
 		},
 	});

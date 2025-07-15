@@ -1,35 +1,44 @@
 {
-  "name": "valorant-coachi",
-  "version": "1.0.0",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "mastra dev --inspect",
-    "build": "mastra build",
-    "start": "mastra start",
-    "format": "biome check --write ./src"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
-  "type": "module",
-  "engines": {
-    "node": ">=20.9.0"
-  },
-  "dependencies": {
-    "@ai-sdk/google": "1.2.22",
-    "@mastra/core": "0.10.12",
-    "@mastra/libsql": "0.11.0",
-    "@mastra/loggers": "0.10.3",
-    "@mastra/memory": "0.11.2",
-    "@mastra/rag": "1.0.2",
-    "zod": "3.23.8"
-  },
-  "devDependencies": {
-    "@biomejs/biome": "2.1.1",
-    "@types/node": "24.0.10",
-    "mastra": "0.10.12",
-    "typescript": "5.8.3"
-  }
+	"name": "valorant-coachi",
+	"version": "1.0.0",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"dev": "mastra dev --inspect",
+		"build": "mastra build",
+		"start": "mastra start",
+		"format": "biome check --write ./src",
+		"drizzle:generate:prd": "drizzle-kit generate --config drizzle.config.ts",
+		"drizzle:generate:local": "drizzle-kit generate --config drizzle.config.local.ts",
+		"drizzle:migrate:prd": "drizzle-kit migrate --config drizzle.config.ts",
+		"drizzle:migrate:local": "drizzle-kit migrate --config drizzle.config.local.ts"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"description": "",
+	"type": "module",
+	"engines": {
+		"node": ">=20.9.0"
+	},
+	"dependencies": {
+		"@ai-sdk/google": "1.2.22",
+		"@google/genai": "1.9.0",
+		"@libsql/client": "0.15.9",
+		"@mastra/core": "0.10.12",
+		"@mastra/libsql": "0.11.0",
+		"@mastra/loggers": "0.10.3",
+		"@mastra/memory": "0.11.2",
+		"@mastra/rag": "1.0.2",
+		"ai": "4.3.17",
+		"drizzle-orm": "0.44.2",
+		"zod": "3.25.76"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "2.1.1",
+		"@types/node": "24.0.10",
+		"drizzle-kit": "0.31.4",
+		"mastra": "0.10.12",
+		"typescript": "5.8.3"
+	}
 }
